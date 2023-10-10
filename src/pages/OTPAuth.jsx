@@ -1,20 +1,19 @@
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 
-import Button from "./Button";
-import Input from "./Input";
+import Button from "../components/Button";
+import Input from "../components/Input";
+import { useNavigate} from "react-router-dom";
 
 
-const OTPAuth = ({ loading, phoneNumberVerfier, setScreen }) => {
+const OTPAuth = ({ loading, phoneNumberVerfier, setScreen, isEmergency, userId }) => {
+    const navigate = useNavigate();
     const { register: register2, formState: formState2, handleSubmit: handleSubmit2 } = useForm()
-
-
     const submitHandler = async (values) => {
         const otpValue = values.otp;
         try {
-            await phoneNumberVerfier(otpValue)
+            await phoneNumberVerfier(otpValue, id, message.current)
             toast.success("OTP successfully verified")
-            setScreen('successful')
         } catch (error) {
             toast.error("We encountered some error. Try again later")
             console.log(error);
@@ -22,13 +21,16 @@ const OTPAuth = ({ loading, phoneNumberVerfier, setScreen }) => {
     };
 
     const editPhoneHandler = () => {
-        setScreen('contact');
-    }
+        if (isEmergency) {
+            navigate(`emergency`)
+            
 
+        }
+        navigate(`contact/otp`)
+    }
 
     return (
         <>
-
             <form onSubmit={handleSubmit2(submitHandler)}>
                 <Input {...register2('otp', {
                     required: "Please enter the otp", validate: (otp) => {

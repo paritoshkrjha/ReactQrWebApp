@@ -1,17 +1,24 @@
 import { useForm, Controller } from "react-hook-form";
+import { useNavigate} from 'react-router-dom';
 import Input from "./Input";
 import Button from "./Button";
 import Radio from "./Radio";
 
 
 
-function UserForm({ setScreen, message, userId }) {
+function  UserForm({ message, userId }) {
     const { register, formState, handleSubmit, control } = useForm();
+    const navigate = useNavigate()
 
     const submitHandler = (values) => {
         message.current = values;
-        setScreen('contact')
+        navigate(`contact`)
     }
+
+    function emergencyHandler() {
+        navigate(`emergency`)
+    }
+
     return (
         <form className=" w-full" onSubmit={handleSubmit(submitHandler)} >
             <span className="block mb-2 px-2 font-heading font-semibold text-base required:true">Select the reason:</span>
@@ -55,6 +62,9 @@ function UserForm({ setScreen, message, userId }) {
             </div>
 
             <Button type='submit' label="Proceed" variant='btn-wide' />
+            <div className="my-2">
+                <Button onClick={emergencyHandler} label="EMERGENCY" variant='btn-warning'/>
+            </div>
         </form>
     )
 }

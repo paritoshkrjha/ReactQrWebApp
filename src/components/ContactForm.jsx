@@ -4,10 +4,13 @@ import Input from "./Input";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+import OtpModal from "./OtpModal";
 
-function ContactForm({ message, setScreen, userId, recaptchaCallback, loading }) {
+
+function ContactForm({ message, userId, recaptchaCallback, phoneNumberVerfier, loading, isEmergency }) {
     const { register: register1, formState: formState1, handleSubmit: handleSubmit1 } = useForm()
+    const navigate = useNavigate()
     const [permissionLabel, setPermissionLabel] = useState('Allow')
     const [allowed, setAllowed] = useState(false);
     const [locationError, setLocationError] = useState('')
@@ -15,14 +18,21 @@ function ContactForm({ message, setScreen, userId, recaptchaCallback, loading })
         'lat': '',
         'lng': ''
     })
+    const [modalActive, setModalActive] = useState(false)
 
     const requestOTP = async (values) => {
         const contactValue = '+91' + values.contact;
-        message.current = { ...message.current, contactValue, key: userId, viewed: 'false', time: serverTimestamp(), coordinates: coordinates }
+        if (isEmergency) {
+            message.current = { ...message.current, contactValue, key: userId, coordinates: coordinates, desc: values.desc }
+        }
+        else {
+            message.current = { ...message.current, contactValue, key: userId, viewed: 'false', time: serverTimestamp(), coordinates: coordinates }
+        }
+        console.log(message)
         try {
             await recaptchaCallback(contactValue);
             toast.success("OTP sent successfully")
-            setScreen('otp');
+            setModalActive(true)
         } catch (err) {
             console.log('The error is', err);
         }
@@ -31,7 +41,6 @@ function ContactForm({ message, setScreen, userId, recaptchaCallback, loading })
     function locationPermissionHandler() {
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(
-                // Success callback function
                 (position) => {
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
@@ -57,6 +66,8 @@ function ContactForm({ message, setScreen, userId, recaptchaCallback, loading })
     }
 
     return (
+        <>
+        {console.log(userId)}
         <form onSubmit={handleSubmit1(requestOTP)}>
             <div className="form-control mb-4">
                 <label className="label cursor-pointer">
@@ -68,6 +79,12 @@ function ContactForm({ message, setScreen, userId, recaptchaCallback, loading })
                 </label>
                 <span className="label-text-alt text-black max-w-[300px] px-2"><span className="text-red-700">*</span>We only need location to verify the vehicle's location.</span>
             </div>
+
+            {
+                isEmergency && <Input {...register1('desc', {
+                    required: "The Descripton can not be empty!", validate: (text) => { }
+                })} minLength={5} label="Enter Message" type="textarea" error={formState1.errors?.desc?.message} placeholder="" control='textarea' />
+            }
 
             <Input {...register1('contact', {
                 required: "Phone number can not be empty", validate: (number) => {
@@ -81,8 +98,11 @@ function ContactForm({ message, setScreen, userId, recaptchaCallback, loading })
             <Button type='submit' label="Get OTP" loading={loading} variant='btn-wide' disable={loading} />
             {loading == true && <label className=" label-text-alt text-black text-center font-medium"> *The form will auto submit as soon recaptcha is verified</label>}
         </form>
+        <OtpModal active={modalActive} onClose = {()=>{
+            setModalActive(false)
+        }} loading={loading} phoneNumberVerfier={phoneNumberVerfier} userId={userId} message={message}  />
+        </>
 
     )
 }
-
 export default ContactForm

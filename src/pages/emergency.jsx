@@ -1,21 +1,21 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import ContactForm from '../components/ContactForm';
 
 
-function EmergencyPage() {
+function EmergencyPage({ recaptchaCallback, loading, userId }) {
     const MySwal = withReactContent(Swal)
     const navigate = useNavigate()
-    const { id } = useParams()
+    const emergencyMessage = useRef({})
+    let {id} = useParams();
 
-    // useEffect(() => {
-    //     showConfirmation()
-    // }, [])
+    useEffect(() => {
+        showConfirmation()
+    }, [])
 
     function showConfirmation() {
-        console.log(id)
         MySwal.fire({
             title: 'Emergency !',
             text: 'Only use this feature in case of EMERGENCY. ',
@@ -37,7 +37,7 @@ function EmergencyPage() {
 
     return (
         <>
-            <ContactForm/>
+            <ContactForm isEmergency={true} phoneNumberVerfier={phoneNumberVerfier} message={emergencyMessage} userId={userId} recaptchaCallback={recaptchaCallback} loading={loading} />
         </>
     );
 }

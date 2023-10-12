@@ -5,7 +5,7 @@ import withReactContent from 'sweetalert2-react-content'
 import ContactForm from '../components/ContactForm';
 
 
-function EmergencyPage({ recaptchaCallback, loading, userId }) {
+function EmergencyPage({ recaptchaCallback, phoneNumberVerfier, loading, userId }) {
     const MySwal = withReactContent(Swal)
     const navigate = useNavigate()
     const emergencyMessage = useRef({})

@@ -21,9 +21,8 @@ function HomeContainer() {
     return (
         <Routes>
             <Route path='/' element={<Home message={message} userId = {id} />} />
+            <Route path='/emergency' element={<EmergencyPage recaptchaCallback={recaptchaCallback} phoneNumberVerfier={phoneNumberVerfier} loading={loading} userId = {id}/>} />
             <Route path='/contact' element={<Contact message={message} recaptchaCallback={recaptchaCallback} phoneNumberVerfier={phoneNumberVerfier} loading={loading} isEmergency={false} userId = {id} />} />
-            <Route path='/emergency' element={<EmergencyPage recaptchaCallback={recaptchaCallback}  loading={loading} userId = {id}/>} />
-            {/* <Route path='/otp' element={<OtpModal loading={loading} phoneNumberVerfier={phoneNumberVerfier} userId={id} message={message} />} /> */}
             <Route path='/success' element={<Success />} />
         </Routes>
     )

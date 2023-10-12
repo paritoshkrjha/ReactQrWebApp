@@ -37,8 +37,8 @@ function OtpModal({ phoneNumberVerfier, userId, loading, active, onClose , messa
     return (
         <div>
             <dialog id={id} className="modal">
-                <div className="modal-box">
-                    <h3 className="font-bold text-lg">Hello!</h3>
+                <div className="modal-box bg-[#f5f5f5] flex flex-col justify-center items-center">
+                    <p className="font-bold text-lg">Verify OTP</p>
                     <form onSubmit={handleSubmit2(submitHandler)}>
                         <Input {...register2('otp', {
                             required: "Please enter the otp", validate: (otp) => {
